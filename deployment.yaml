@@ -14,6 +14,7 @@ spec:
     spec:
       containers:
       - name: flask-container
-        image: chaitanyaacr786543.azurecr.io/myapp:v1
+        image: chaitanyaacr786543.azurecr.io/myapp:latest
+        imagePullPolicy: Always
         ports:
         - containerPort: 5000

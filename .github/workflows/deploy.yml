@@ -28,16 +28,17 @@ jobs:
     - name: Build and Push Image to ACR
       run: |
         az acr build \
-          --registry <your-acr-name> \
-          --image backend:${{ github.sha }} .
+          --registry chaitanyaacr786543 \
+          --image myapp:${{ github.sha }} .
 
     - name: Set AKS Context
       uses: azure/aks-set-context@v3
       with:
-        resource-group: <your-rg-name>
-        cluster-name: <your-aks-name>
+        resource-group: my-rg
+        cluster-name: my-aks
 
     - name: Deploy to AKS
       run: |
-        kubectl set image deployment/backend \
-        backend=<your-acr-name>.azurecr.io/backend:${{ github.sha }}
+        kubectl set image deployment/flask-app \
+        flask-container=chaitanyaacr786543.azurecr.io/myapp:${{ github.sha }}
+        kubectl rollout status deployment/flask-app

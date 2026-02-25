@@ -1,0 +1,19 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kaniko-build
+  namespace: demo
+spec:
+  backoffLimit: 0
+  template:
+    spec:
+      serviceAccountName: default
+      containers:
+        - name: kaniko
+          image: gcr.io/kaniko-project/executor:latest
+          args:
+            - "--context=git://github.com/ankamarao1999/Pipeline-Testing.git"
+            - "--dockerfile=Dockerfile"
+            - "--destination=chaitanyaacr2026.azurecr.io/myapp:latest"
+            - "--skip-tls-verify"
+      restartPolicy: Never
