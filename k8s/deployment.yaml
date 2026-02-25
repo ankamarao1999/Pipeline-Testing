@@ -2,6 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: flask-app
+  namespace: demo
 spec:
   replicas: 1
   selector:
@@ -15,7 +16,5 @@ spec:
       containers:
       - name: flask-container
         image: chaitanyaacr786543.azurecr.io/myapp:latest
-        imagePullPolicy: Always
         ports:
         - containerPort: 5000
-        

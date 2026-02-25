@@ -7,19 +7,15 @@ spec:
   backoffLimit: 0
   template:
     spec:
-      containers:
-        - name: kaniko
-          image: gcr.io/kaniko-project/executor:latest
-          args:
-            - "--dockerfile=/workspace/Dockerfile"
-            - "--context=git://github.com/ankamarao1999/Pipeline-Testing.git"
-            - "--destination=chaitanyaacr786543.azurecr.io/myapp:latest"
-            - "--skip-tls-verify"
-          volumeMounts:
-            - name: kaniko-secret
-              mountPath: /kaniko/.docker
+      serviceAccountName: kaniko-sa
       restartPolicy: Never
-      volumes:
-        - name: kaniko-secret
-          secret:
-            secretName: acr-auth-secret
+      containers:
+      - name: kaniko
+        image: gcr.io/kaniko-project/executor:latest
+        args:
+          - "--dockerfile=/workspace/Dockerfile"
+          - "--context=git://github.com/ankamarao1999/Pipeline-Testing.git"
+          - "--destination=chaitanyaacr786543.azurecr.io/myapp:latest"
+        env:
+        - name: DOCKER_CONFIG
+          value: /kaniko/.docker/
