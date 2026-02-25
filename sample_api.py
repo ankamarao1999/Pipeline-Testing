@@ -4,11 +4,13 @@ app = Flask(__name__)
 
 # ──────────────────────────────────────────────
 # API 1: GET /hello
-# Returns a simple greeting message
+# Example:
+#   GET /hello
+#   GET /hello?name=Chaitanya
 # ──────────────────────────────────────────────
 @app.route("/hello", methods=["GET"])
 def hello():
-    name = request.args.get("name", "World")  # optional ?name=YourName
+    name = request.args.get("name", "World")
     return jsonify({
         "status": "success",
         "message": f"Hello, {name}!",
@@ -18,8 +20,11 @@ def hello():
 
 # ──────────────────────────────────────────────
 # API 2: POST /add
-# Accepts two numbers and returns their sum
-# Body: { "num1": 10, "num2": 20 }
+# Body:
+#   {
+#     "num1": 10,
+#     "num2": 20
+#   }
 # ──────────────────────────────────────────────
 @app.route("/add", methods=["POST"])
 def add_numbers():
@@ -31,9 +36,15 @@ def add_numbers():
             "message": "Please provide 'num1' and 'num2' in the request body"
         }), 400
 
-    num1 = data["num1"]
-    num2 = data["num2"]
-    result = num1 + num2
+    try:
+        num1 = float(data["num1"])
+        num2 = float(data["num2"])
+        result = num1 + num2
+    except Exception:
+        return jsonify({
+            "status": "error",
+            "message": "num1 and num2 must be numbers"
+        }), 400
 
     return jsonify({
         "status": "success",
@@ -45,10 +56,16 @@ def add_numbers():
 
 
 # ──────────────────────────────────────────────
-# Run the server
+# Health Check API (Very Important for AKS)
+# ──────────────────────────────────────────────
+@app.route("/health", methods=["GET"])
+def health():
+    return jsonify({"status": "healthy"}), 200
+
+
+# ──────────────────────────────────────────────
+# Run Application
 # ──────────────────────────────────────────────
 if __name__ == "__main__":
-    print("✅ Server is running at http://127.0.0.1:5000")
-    print("📌 API 1 → GET  http://127.0.0.1:5000/hello")
-    print("📌 API 2 → POST http://127.0.0.1:5000/add")
-    app.run(debug=True, port=5000)
+    print("🚀 Flask server running on 0.0.0.0:5000")
+    app.run(host="0.0.0.0", port=5000)
