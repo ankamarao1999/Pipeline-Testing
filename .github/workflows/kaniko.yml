@@ -14,6 +14,6 @@ spec:
           args:
             - "--context=git://github.com/ankamarao1999/Pipeline-Testing.git"
             - "--dockerfile=Dockerfile"
-            - "--destination=chaitanyaacr2026.azurecr.io/myapp:latest"
+            - "--destination=chaitanyaacr786543.azurecr.io/myapp:latest"
             - "--skip-tls-verify"
       restartPolicy: Never

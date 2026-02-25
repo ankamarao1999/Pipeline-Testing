@@ -1,3 +1,50 @@
+# name: AKS CI-CD
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# permissions:
+#   id-token: write
+#   contents: read
+
+# jobs:
+#   build-and-deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+
+#     - name: Checkout Code
+#       uses: actions/checkout@v3
+
+#     - name: Azure Login using OIDC
+#       uses: azure/login@v1
+#       with:
+#          client-id: 0534ecf5-03ec-46f7-bb03-8858b41cd54a
+#          tenant-id: 3f7f59ba-eff8-41d7-8712-86a75a4e6ca1
+#          subscription-id: 7b752875-2c97-4e39-9701-8aa5138d41e2
+#         # client-id: ${{ secrets.AZURE_CLIENT_ID }}
+#         # tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+#         # subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+#     - name: Build and Push Image to ACR
+#       run: |
+#         az acr build \
+#           --registry chaitanyaacr786543 \
+#           --image myapp:${{ github.sha }} .
+
+#     - name: Set AKS Context
+#       uses: azure/aks-set-context@v3
+#       with:
+#         resource-group: my-rg
+#         cluster-name: my-aks
+
+#     - name: Deploy to AKS
+#       run: |
+#         kubectl set image deployment/flask-app \
+#         flask-container=chaitanyaacr786543.azurecr.io/myapp:${{ github.sha }}
+#         kubectl rollout status deployment/flask-app
 name: AKS CI-CD
 
 on:
@@ -15,33 +62,46 @@ jobs:
 
     steps:
 
+    # ------------------------------
+    # 1. Checkout Code
+    # ------------------------------
     - name: Checkout Code
       uses: actions/checkout@v3
 
+    # ------------------------------
+    # 2. Azure Login using OIDC
+    # ------------------------------
     - name: Azure Login using OIDC
       uses: azure/login@v1
       with:
-         client-id: 0534ecf5-03ec-46f7-bb03-8858b41cd54a
-         tenant-id: 3f7f59ba-eff8-41d7-8712-86a75a4e6ca1
-         subscription-id: 7b752875-2c97-4e39-9701-8aa5138d41e2
-        # client-id: ${{ secrets.AZURE_CLIENT_ID }}
-        # tenant-id: ${{ secrets.AZURE_TENANT_ID }}
-        # subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        client-id: 0534ecf5-03ec-46f7-bb03-8858b41cd54a
+        tenant-id: 3f7f59ba-eff8-41d7-8712-86a75a4e6ca1
+        subscription-id: 7b752875-2c97-4e39-9701-8aa5138d41e2
 
+    # ------------------------------
+    # 3. Build & Push Image to ACR
+    # ------------------------------
     - name: Build and Push Image to ACR
       run: |
         az acr build \
           --registry chaitanyaacr786543 \
           --image myapp:${{ github.sha }} .
 
+    # ------------------------------
+    # 4. Set AKS Context
+    # ------------------------------
     - name: Set AKS Context
       uses: azure/aks-set-context@v3
       with:
         resource-group: my-rg
         cluster-name: my-aks
 
+    # ------------------------------
+    # 5. Deploy to AKS
+    # ------------------------------
     - name: Deploy to AKS
       run: |
         kubectl set image deployment/flask-app \
-        flask-container=chaitanyaacr786543.azurecr.io/myapp:${{ github.sha }}
+          flask-container=chaitanyaacr786543.azurecr.io/myapp:${{ github.sha }}
+
         kubectl rollout status deployment/flask-app
