@@ -105,3 +105,4 @@ jobs:
           flask-container=chaitanyaacr786543.azurecr.io/myapp:${{ github.sha }}
 
         kubectl rollout status deployment/flask-app
+
