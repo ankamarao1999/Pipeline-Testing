@@ -1,0 +1,43 @@
+name: AKS CI-CD
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Azure Login using OIDC
+      uses: azure/login@v1
+      with:
+        client-id: ${{ secrets.AZURE_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+
+    - name: Build and Push Image to ACR
+      run: |
+        az acr build \
+          --registry <your-acr-name> \
+          --image backend:${{ github.sha }} .
+
+    - name: Set AKS Context
+      uses: azure/aks-set-context@v3
+      with:
+        resource-group: <your-rg-name>
+        cluster-name: <your-aks-name>
+
+    - name: Deploy to AKS
+      run: |
+        kubectl set image deployment/backend \
+        backend=<your-acr-name>.azurecr.io/backend:${{ github.sha }}
