@@ -1,3 +1,24 @@
+# apiVersion: apps/v1
+# kind: Deployment
+# metadata:
+#   name: flask-app
+#   namespace: demo
+# spec:
+#   replicas: 1
+#   selector:
+#     matchLabels:
+#       app: flask-app
+#   template:
+#     metadata:
+#       labels:
+#         app: flask-app
+#     spec:
+#       containers:
+#       - name: flask-container
+#         image: chaitanyaacr786543.azurecr.io/myapp:latest
+#         ports:
+#         - containerPort: 5000
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -16,6 +37,21 @@ spec:
       containers:
       - name: flask-container
         image: chaitanyaacr786543.azurecr.io/myapp:latest
+        imagePullPolicy: Always   # 🔥 VERY IMPORTANT
         ports:
         - containerPort: 5000
-        
+
+        # 🔥 Recommended Liveness & Readiness probes
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 10
+
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 3
+          periodSeconds: 5
