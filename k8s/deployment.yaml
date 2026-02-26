@@ -18,3 +18,4 @@ spec:
         image: chaitanyaacr786543.azurecr.io/myapp:latest
         ports:
         - containerPort: 5000
+        
