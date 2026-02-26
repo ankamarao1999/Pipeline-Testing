@@ -13,9 +13,16 @@ spec:
       - name: kaniko
         image: gcr.io/kaniko-project/executor:latest
         args:
-          - "--dockerfile=/workspace/Dockerfile"
-          - "--context=git://github.com/ankamarao1999/Pipeline-Testing.git"
+          - "--dockerfile=Dockerfile"
+          - "--context=git://github.com/ankamarao1999/Pipeline-Testing.git#main"
           - "--destination=chaitanyaacr786543.azurecr.io/myapp:latest"
         env:
         - name: DOCKER_CONFIG
           value: /kaniko/.docker/
+        volumeMounts:
+        - name: docker-config
+          mountPath: /kaniko/.docker/
+      volumes:
+      - name: docker-config
+        secret:
+          secretName: acr-secret
