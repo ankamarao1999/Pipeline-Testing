@@ -25,3 +25,4 @@ def get_user(user_id):
             "status": "error",
             "message": "User not found"
         }), 404
+        
