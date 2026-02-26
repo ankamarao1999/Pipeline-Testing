@@ -1,6 +1,11 @@
 from flask import Flask, jsonify, request
+from user_api import user_blueprint   # ⬅ import the blueprint from user_api
 
 app = Flask(__name__)
+
+# Register the user API blueprint
+app.register_blueprint(user_blueprint)
+
 
 # ──────────────────────────────────────────────
 # API 1: GET /hello
